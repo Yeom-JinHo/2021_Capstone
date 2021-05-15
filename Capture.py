@@ -1,4 +1,3 @@
-
 from darkflow.net.build import TFNet
 import cv2
 import time
@@ -8,11 +7,11 @@ import serial
 import numpy
 import struct
 
-ser = serial.Serial('/dev/ttyUSB0', 115200) # baud rate
+#ser = serial.Serial('/dev/ttyUSB0', 115200) # baud rate
 
 def capturing(): #캡쳐구간 설정
     print("Current Mouse Position:",pyautogui.position()) #커서위치확인
-    pyautogui.screenshot('./test.png',region=(30,180,500,300)) #region= 커서위치x,y& x,y길이
+    pyautogui.screenshot('./test.png',region=(30,50,1000,500)) #region= 커서위치x,y& x,y길이
 
 def testing():
     options = {"model": "cfg/yolo.cfg", "load": "bin/yolov2.weights", "threshold": 0.1}
@@ -20,25 +19,36 @@ def testing():
     imgcv = cv2.imread("./test.png")
     result = tfnet.return_predict(imgcv)
     return result
-    
-def sendingToServer(results):
-    #datas = {"results":"animal detected!!", "location":"[경부고속도로]부지", "Time":time.strftime('%y-%m-%d %H:%M:%S'),"longitude": "35.8046466536","latitude":"129.1867718281"}
-    datas = {"results":"animal detected!!", "location":"가덕영업소", "Time":time.strftime('%y-%m-%d %H:%M:%S'),"longitude": "35.1881","latitude":"126.862893"}
-    url="http://ec2-3-34-151-216.ap-northeast-2.compute.amazonaws.com:3000/update"
-    requests.post(url, data=datas)
 
 def parsing(results):
-    a=0
+    personN=0
+    fireN=0
+    personC=0.0
+    fireC=0.0
     for i in range(len(results)):
-        if results[i]=={'animal'}:
-            print("animal detected")
-            sendingToServer(results)
-            print("sending detection complete")
-            a=a+1
-            break
-    if a==0:
-        print("no animal detected")
-        
+        print(i)
+        print(results[i]['label'])
+        if results[i]['label']=='person':
+            print("person detected")
+            #print(personN)
+            #print(results[i]['confidence'])
+            personC=personC+results[i]['confidence']	
+            personN=personN+1
+        if results[i]['label']=='fire':
+            print("fire detected")
+            #print(fireN)
+            #print(results[i]['confidence'])
+            fireC=fireC+results[i]['confidence']	
+            #fireN=fireN+1
+    if fireN==0:
+        print("no fire detected")
+    print("**********************************************")
+    if personN!=0:
+       personC=personC/personN
+    if fireN!=0:
+       fireC=fireC/fireN
+    SendSever(personN,personC)
+    print("sending detection complete")
 def PrintLoRaInfo():
     # Request SX1276 info (device type/MAC address)
     ser.write(b'\x02\xa1\x00\x00\x03') 
@@ -82,21 +92,25 @@ def CheckDataSend():
         print ("Authentication failure")
     return 0
 
-def SendSever():
+def SendSever(personN,fireC):
+    cnt=0
     print ()
     print ('Count Number='+str(cnt))
-    print ('Temperature={0:0.1f}*C Humidity={1:0.1f}%'.format(temperature, humidity))
-    datalen = len(str(temperature))+len(str(humidity))+len(str(cnt))+1
-    ser.write(b'\x02\xa2\x00'+struct.pack("B",datalen)+str(temperature).encode()+b'\x20'+str(humidity).encode()+str(cnt).encode()+b'\x03')
-    sent = CheckDataSend()
+    print ('Person={0:0.0f} Fire={1:0.1f}%'.format(personN, fireC*100))
+    datalen = len(str(personN))+len(str(fireC))+len(str(cnt))+1
+    #ser.write(b'\x02\xa2\x00'+struct.pack("B",datalen)+str(personN).encode()+b'\x20'+str(fireC).encode()+str(cnt).encode()+b'\x03')
+    #sent = CheckDataSend()
+    cnt=cnt+1
+    if cnt==10:
+       cnt=0
     
         
-
-
 while True:
     print("========================start===============================")
+    #PrintLoRaInfo()
     capturing()
     result=testing()
+    print("========================result==============================")
     print(result)
     parsing(result)
     print("=========================end================================")
