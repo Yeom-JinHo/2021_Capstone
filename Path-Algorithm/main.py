@@ -8,45 +8,18 @@ margin = 1						# Margin between each node in Pixels
 node_list = []  					# List to contain the all the generated nodes
 
 #Defaults
-default_screen_size = (1000, 750)
+default_screen_size = (750, 700)
 background_color = pygame.Color("gray")
-default_start_grid_pos, default_end_grid_pos = (8,10), (9,12)	# X and Y value to the start & end nodes (relitive to the grid not to the screen)
-#default_ob_gird_pos=[(0,0),(0,1),(0,2),(0,3),(0,4),(0,5)]
-default_ob_gird_pos=list()
-for i in range(0,13):
-	default_ob_gird_pos.append((0,i))
-for i in range(0,21):
-	default_ob_gird_pos.append((i,5))
-for i in range(24,38):
-	default_ob_gird_pos.append((i,5))
-for i in range(0,6):
-	default_ob_gird_pos.append((8,i))
-for i in range(0,6):
-	default_ob_gird_pos.append((20,i))
-for i in range(0,6):
-	default_ob_gird_pos.append((24,i))
-	
-for i in range(15,21):
-	default_ob_gird_pos.append((5,i))
-for i in range(15,21):
-	default_ob_gird_pos.append((15,i))
-for i in range(15,21):
-	default_ob_gird_pos.append((30,i))
-for i in range(5,38):
-	default_ob_gird_pos.append((i,15))
-weight_image_path = os.path.abspath("fire1.png")
-weighted_node_cost = 100
-
-person_image_path = os.path.abspath("person.png")
-person_node_cost = 3
-
+default_start_grid_pos, default_end_grid_pos = (5,5), (15,5)	# X and Y value to the start & end nodes (relitive to the grid not to the screen)
+weight_image_path = os.path.abspath("weight.png")
+weighted_node_cost = 4
 info_panel_size = (500, 130)
 minimum_delay = 0.001
 maximum_delay = 0.5
 
 #Other
 algorithm = pathfinder.Dijkstra	#The algorithm that we are going to use (Default : Dijkstra)
-start_node, end_node, ob_node = None, None, None
+start_node, end_node = None, None
 delay_time = minimum_delay			# The time you want to delay between each node update *In Seconds (in other words: speed)
 info_text = ""
 #This will load the info text from a .txt file
@@ -97,17 +70,6 @@ def SetEnd(node):
 	node.Reset()
 	node.ChangeColor(colors.NodeColors.end.value)
 	end_node = node
-def SetOb(node):
-	"""
-		Sets the given node as End Node and resets the last end node to normal (if there is any)
-	"""
-	global ob_node
-#	if ob_node != None:
-#		ob_node.Reset()
-	node.SetToObstacle()
-	#node.Reset()
-	node.ChangeColor(colors.NodeColors.obstacle.value)
-	ob_node = node
 def ModifyNode(position, new_type):
 	"""
 		Takes a position on the screen and find the node in that position then updates the node to match the given type
@@ -129,11 +91,9 @@ def ModifyNode(position, new_type):
 		node.SetToObstacle()
 	elif new_type == NodeTypes.Weight and not node.is_obstacle:
 		node.SetToWeighted(weighted_node_cost)
-	elif new_type == NodeTypes.Person and not node.is_obstacle :
-		node.SetToPerson(person_node_cost)
 	elif new_type == NodeTypes.Normal:
 		node.Reset()
-def Reset(remove_obstacles = False, remove_weight = False,remove_person= False):
+def Reset(remove_obstacles = False, remove_weight = False):
 	"""
 		Rsets all the nodes to normal nodes except the start and end nodes
 	"""
@@ -148,12 +108,6 @@ def Reset(remove_obstacles = False, remove_weight = False,remove_person= False):
 				node.Draw()
 			elif node.is_weight:
 				if remove_weight:
-					node.Reset()
-				else:
-					node.ResetDistances()
-					node.ChangeColor(colors.NodeColors.normal.value)
-			elif node.is_person:
-				if remove_person:
 					node.Reset()
 				else:
 					node.ResetDistances()
@@ -239,10 +193,6 @@ def FindPath():
 		Reset(False, True)
 	else:
 		Reset(False, False)
-	if not pathfinder.GetIsPerson(algorithm):
-		Reset(False, True)
-	else:
-		Reset(False, False)
 	path = algorithm(node_list, start_node, end_node)
 	if path == None:
 		return
@@ -270,7 +220,7 @@ def ZoomOut():
 pygame.init()
 pygame.display.set_caption("Path finding Visualizer")
 screen = pygame.display.set_mode(default_screen_size, pygame.RESIZABLE)
-node_generator = node.NodeGenerator(screen, rect_size, weight_image_path,person_image_path)
+node_generator = node.NodeGenerator(screen, rect_size, weight_image_path)
 font = pygame.font.SysFont("arial", 20)
 pathfinder.on_checking_event.append(OnCheking)
 pathfinder.on_finished_event.append(OnVisited)
@@ -282,8 +232,7 @@ DrawInfoPanel()
 #Set default start and end nodes
 SetStart(node_list[default_start_grid_pos[0]][default_start_grid_pos[1]])
 SetEnd(node_list[default_end_grid_pos[0]][default_end_grid_pos[1]])
-for i in range(len(default_ob_gird_pos)):
-	SetOb(node_list[default_ob_gird_pos[i][0]][default_ob_gird_pos[i][1]])
+
 mouse_down = False
 remove_mode = False
 draw_mode = NodeTypes.Start
@@ -322,8 +271,6 @@ while True:
 				draw_mode = NodeTypes.End
 			elif event.key == pygame.K_o:
 				draw_mode = NodeTypes.Obstacle
-			elif event.key == pygame.K_p:
-				draw_mode = NodeTypes.Person
 			elif event.key == pygame.K_w:
 				draw_mode = NodeTypes.Weight
 			elif event.key == pygame.K_r:

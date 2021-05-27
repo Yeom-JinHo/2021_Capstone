@@ -131,11 +131,3 @@ def GetIsWeighted(algorithm):
 		return True
 	else:
 		return False
-def GetIsPerson(algorithm):
-	"""
-		Returns whether the algorithm is Weighted or not
-	"""
-	if algorithm in [Dijkstra, AStar]:
-		return True
-	else:
-		return False
