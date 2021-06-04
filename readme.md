@@ -66,7 +66,7 @@ $sudo apt-get install mosquitto-clients
 </pre>
 
 ## 대피알고리즘
-탐욕적 알고리즘 기반으로 알고리즘을 구현하였다.
+탐욕적 알고리즘 기반으로 알고리즘을 화재와 사람을 YOLO가 탐지하여 가중치를 주는 방식으로 구현하였다.
 
 <img width=500, height=250 src=https://user-images.githubusercontent.com/81306489/120764489-280f9780-c553-11eb-9513-ccefe4a7a77e.gif>
 다익스트라 알고리즘과의 비교영상이다.
