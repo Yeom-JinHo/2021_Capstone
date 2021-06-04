@@ -9,8 +9,11 @@ from typing import NamedTuple
 INFLUXDB_ADDRESS = '192.168.0.129'
 INFLUXDB_USER = 'exP01'
 INFLUXDB_PASSWORD = 'password'
-INFLUXDB_DATABASE = 'ex01'
-
+INFLUXDB_DATABASE = 'ex02'
+MAC_ADDRESS = ["kyungbaekkim@jnu.ac.kr/3534353157376704",
+               "kyungbaekkim@jnu.ac.kr/353435315A376904",
+               "kyungbaekkim@jnu.ac.kr/3534353173375F02"]
+REAL_ADDRESS = ["1-1","1","1-2"]
 #MQTT_ADDRESS = '192.168.0.8'
 #MQTT_USER = 'exP01'
 #MQTT_PASSWORD = 'password'
@@ -62,17 +65,34 @@ class MqttStorage:
         }
     ]
     influxdb_client.write_points(json_body)
+
+  def tranTopic(self,topic):
+      index=MAC_ADDRESS.index(topic)
+      return index
+    
   def on_message(self, client, userdata, msg):
     print ("Topic: " + msg.topic + '\nMessage: ' + str(msg.payload))
+	index =self.tranTopic(msg.topic)
+    tran_topic=REAL_ADDRESS[index]
     sensor_data = str(msg.payload)
-    tmp_sensor=sensor_data[2:6]
-    hum_sensor=sensor_data[7:11]
-    tmp_data = SensorData(msg.topic,'tmp',float(tmp_sensor))
-    hum_data = SensorData(msg.topic,'hum',float(hum_sensor))
+    if tran_topic=='1':
+		person_sensor=sensor_data[2:6]
+		fire_sensor=sensor_data[7:11]
+		person_data = SensorData(tran_topic,'person',float(person_sensor))
+        fire_data = SensorData(tran_topic,'fire',float(fire_sensor))
+	else:
+        tmp_sensor=sensor_data[2:6]
+        hum_sensor=sensor_data[7:11]
+        tmp_data = SensorData(tran_topic,'tmp',float(tmp_sensor))
+        hum_data = SensorData(tran_topic,'hum',float(hum_sensor))
     if hum_data is not None:
       self._send_sensor_data_to_influxdb(hum_data)
     if tmp_data is not None:
-      self._send_sensor_data_to_influxdb(tmp_data)  
+      self._send_sensor_data_to_influxdb(tmp_data)
+	if person_data is not None:
+	  self._send_sensor_data_to_influxdb(person_data)
+	if fire_data is not None:
+	  self._send_sensor_data_to_influxdb(fire_data)
     self.store(configure_storage.storage_path + msg.topic, msg.payload) 
   
 
