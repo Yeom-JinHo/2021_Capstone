@@ -65,6 +65,12 @@ $sudo apt-get install mosquitto-clients
 </code>
 </pre>
 
+## 대피알고리즘
+탐욕적 알고리즘 기반으로 알고리즘을 구현하였다.
+
+<img width=500, height=250 src=https://user-images.githubusercontent.com/81306489/120764489-280f9780-c553-11eb-9513-ccefe4a7a77e.gif>
+다익스트라 알고리즘과의 비교영상이다.
+
 ## 사용자 부
 InfluxDB에 저장된 데이터를 실시간으로 모니터링하기 위해 대시보드인 Grafana를 이용해 화면에 출력한다.
 
