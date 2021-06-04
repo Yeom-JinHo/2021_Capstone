@@ -266,12 +266,9 @@ def ZoomIn():
 def ZoomOut():
 	if rect_size[0] > 10 and rect_size[1] > 10:
 		Zoom(-1)
-def DrawTime():
-	"""
-		Draws the delay time text on the left-up part of the screen using the public font
-	"""
+def DrawDuringTime(totalseconds):
 	text = font.render("During Time: " + str(totalseconds)[:4] + "s", True, colors.General.info_text.value, colors.General.text.value)
-	screen.blit(text, (10,0))
+	screen.blit(text, (0,23))
 pygame.init()
 pygame.display.set_caption("Path finding Visualizer")
 screen = pygame.display.set_mode(default_screen_size, pygame.RESIZABLE)
@@ -353,9 +350,7 @@ while True:
 				currentTime = time.time()
 				FindPath()
 				totalseconds=time.time()-currentTime
-				print(currentTime)
-				print(totalseconds)
-				DrawTime()
+				DrawDuringTime(totalseconds)
 		#Modify nodes
 		elif event.type == pygame.MOUSEMOTION:
 			if remove_mode:
