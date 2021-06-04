@@ -1,7 +1,7 @@
 # 로라모듈을 이용한 화재 대피 경로안내 시스템
 
 ## 기술스택
-<img src="https://img.shields.io/badge/json-000000?style=flat-square&logo=json&logoColor=white&link=https://ko.wikipedia.org/wiki/JSON"> <img src="https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=Grafana&logoColor=white&link=https://grafana.com"> <img src="https://img.shields.io/badge/InfluxDB-22ADF6?style=flat-square&logo=InfluxDB&logoColor=white&link=https://grafana.com"> <img src="https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=Linux&logoColor=white&link=https://grafana.com"> <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=Python&logoColor=white&link=https://grafana.com"> <img src="https://img.shields.io/badge/mqtt-3C5280?style=flat-square&logo=Eclipse Mosquitto&logoColor=white&link=https://grafana.com">
+<img src="https://img.shields.io/badge/json-000000?style=flat-square&logo=json&logoColor=white&link=https://ko.wikipedia.org/wiki/JSON"> <img src="https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=Grafana&logoColor=white&link=https://grafana.com"> <img src="https://img.shields.io/badge/InfluxDB-22ADF6?style=flat-square&logo=InfluxDB&logoColor=white&link=https://grafana.com"> <img src="https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=Linux&logoColor=white&link=https://grafana.com"> <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=Python&logoColor=white&link=https://grafana.com"> <img src="https://img.shields.io/badge/MQTT-3C5280?style=flat-square&logo=Eclipse-Mosquitto&logoColor=white">
 
 ## Intro
 
