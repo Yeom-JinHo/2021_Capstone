@@ -6,16 +6,20 @@ font_size = 10
 class NodeGenerator():
 	rect_size = None
 	weight_image = None
+	person_image = None
 	screen = None
-	def __init__(self, screen_, rect_size_, weight_image_path):
-		global screen, rect_size, weight_image
+	def __init__(self, screen_, rect_size_, weight_image_path, person_image_path):
+		global screen, rect_size, weight_image, person_image
 		screen = screen_
 		rect_size = rect_size_
 		try:
 			weight_image = pygame.image.load(weight_image_path)
+			person_image = pygame.image.load(person_image_path)
 		except:
 			print(f"{weight_image_path} is not reachable")
+			print(f"{person_image_path} is not reachable")
 			weight_image = None
+			person_image = None
 	def UpdateRectSize(self, new_size):
 		global rect_size, font, font_size
 		rect_size = new_size
@@ -32,6 +36,7 @@ class NodeGenerator():
 			self.previous_node = None					# The node that updated this node (this help us to track back our path)
 			self.is_obstacle = False					# Defines whether the node blocks the path or not (True = blocks the path)
 			self.is_weight = False
+			self.is_person = False
 			self.color = color
 			self.cost = cost
 		
@@ -50,7 +55,10 @@ class NodeGenerator():
 				image = weight_image
 				image = pygame.transform.scale(image, (int(image.get_width() * (rect_size[0]/100)), int(image.get_height() *(rect_size[1]/100))))
 				screen.blit(image, (self.position[0] + (rect_size[0] - image.get_width())/2, (self.position[1] + (rect_size[1] - image.get_height())/2)))
-			
+			if self.is_person and person_image != None:
+				image = person_image
+				image = pygame.transform.scale(image, (int(image.get_width() * (rect_size[0]/100)), int(image.get_height() *(rect_size[1]/100))))
+				screen.blit(image, (self.position[0] + (rect_size[0] - image.get_width())/2, (self.position[1] + (rect_size[1] - image.get_height())/2)))
 			if rect_size[0] >= 25:
 				if self.distance_from_start not in (0, float("inf")):
 					screen.blit(font.render(str(self.distance_from_start), True, colors.General.text.value), (self.position[0], self.position[1]+(rect_size[1]) - font_size))
@@ -75,6 +83,12 @@ class NodeGenerator():
 			self.is_weight = True
 			self.cost = cost
 			self.Draw()
+		def SetToPerson(self, cost):
+			if self.is_person:
+				return
+			self.is_person = True
+			self.cost = cost
+			self.Draw()
 		def SetToObstacle(self):
 			"""
 				Set the values that will make this node a obstacle node
@@ -95,6 +109,7 @@ class NodeGenerator():
 			self.ResetDistances()
 			self.is_obstacle = False
 			self.is_weight = False
+			self.is_person = False
 			self.cost = 1
 			self.ChangeColor(colors.NodeColors.normal.value)
 
@@ -104,3 +119,4 @@ class NodeTypes(Enum):
 	End = 2
 	Obstacle = 3
 	Weight = 4
+	Person = 5
